@@ -1,0 +1,273 @@
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.stage[data-state='fallback'] .canvas {
+  display: none;
+}
+/* The hero: white or near-black text is picked from the shader behind it, with a soft shade so it reads over any frame. */
+.stage {
+  --ink: #fff;
+  --shade: 7, 7, 12;
+  --shade-at: 0.42;
+}
+.stage[data-tone='dark'] {
+  --ink: #0b0b10;
+  --shade: 255, 251, 243;
+}
+.stage[data-shade='strong'] {
+  --shade-at: 0.74;
+}
+.hero {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 6vw, 88px) clamp(20px, 6vw, 96px) clamp(60px, 7vw, 96px);
+  overflow: hidden;
+  color: var(--ink);
+  font-family: 'Instrument Sans Variable', system-ui, sans-serif;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+}
+.stage[data-state='ready'] .hero,
+.stage[data-state='fallback'] .hero {
+  opacity: 1;
+}
+.hero[data-layout='left'] {
+  align-items: flex-start;
+  text-align: left;
+}
+.hero[data-layout='low'] {
+  align-items: flex-start;
+  justify-content: flex-end;
+  text-align: left;
+}
+.hero[data-layout='top'] {
+  justify-content: flex-start;
+}
+.copy {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: inherit;
+  max-width: min(100%, 1240px);
+  pointer-events: auto;
+}
+.copy::before {
+  position: absolute;
+  z-index: -1;
+  inset: -22% -16%;
+  background: radial-gradient(closest-side, rgba(var(--shade), var(--shade-at)) 52%, rgba(var(--shade), calc(var(--shade-at) * 0.7)) 74%, rgba(var(--shade), 0));
+  content: '';
+  pointer-events: none;
+}
+.stage[data-shade='strong'] .copy::before {
+  inset: -32% -24%;
+}
+.copy h1 {
+  margin: 0;
+  color: inherit;
+  font-size: clamp(44px, calc(var(--size) * 1vw), calc(var(--size) * 15.5px));
+  line-height: 0.98;
+  text-shadow: 0 1px 34px rgba(var(--shade), 0.45);
+}
+.copy h1 span {
+  display: block;
+}
+.copy p {
+  color: inherit;
+}
+.kicker {
+  margin: 0 0 clamp(14px, 1.7vw, 24px);
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(var(--shade), 0.7);
+  font-size: clamp(12px, 1vw, 15px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.lede {
+  max-width: 34em;
+  margin: clamp(16px, 2vw, 28px) 0 0;
+  font-size: clamp(18px, 1.8vw, 27px);
+  font-weight: 600;
+  line-height: 1.38;
+  text-shadow: 0 0 2px rgba(var(--shade), 0.7), 0 1px 18px rgba(var(--shade), 0.8);
+}
+.form {
+  display: flex;
+  align-items: stretch;
+  width: min(100%, 560px);
+  min-height: 62px;
+  margin-top: clamp(20px, 2.4vw, 34px);
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: rgba(var(--shade), 0.78);
+}
+.form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 8px 0 24px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: 600 17px/1 'Instrument Sans Variable', system-ui, sans-serif;
+  outline: none;
+}
+.form input::placeholder {
+  color: inherit;
+  opacity: 0.82;
+}
+.form button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  margin: 4px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: rgb(var(--shade));
+  font: 700 16px/1 'Instrument Sans Variable', system-ui, sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.form button:hover {
+  transform: translateX(2px);
+}
+.form:focus-within {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.form p {
+  margin: 0;
+  padding: 0 24px;
+  align-self: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+.hero[data-form='block'] .form,
+.hero[data-form='block'] .form button {
+  border-radius: 4px;
+}
+.hero[data-form='line'] .form {
+  border-width: 0 0 2px;
+  border-radius: 0;
+  background: rgba(var(--shade), 0.5);
+}
+.hero[data-form='line'] .form input {
+  padding-left: 14px;
+}
+.hero[data-form='line'] .form button {
+  margin: 8px;
+  border-radius: 2px;
+}
+@media (max-width: 520px) {
+  .form,
+  .hero[data-form='line'] .form,
+  .hero[data-form='block'] .form {
+    flex-direction: column;
+    gap: 8px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .form input,
+  .hero[data-form='line'] .form input {
+    min-height: 52px;
+    padding: 0 18px;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    background: rgba(var(--shade), 0.78);
+  }
+  .form button,
+  .hero[data-form='line'] .form button,
+  .hero[data-form='block'] .form button {
+    justify-content: center;
+    min-height: 52px;
+    margin: 0;
+    border-radius: 999px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .form button {
+    transition: none;
+  }
+}
+/* The controls stay out of the way: one small pill at the bottom edge, faint until it is used. */
+.bar {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(10, 10, 12, 0.42);
+  color: #fff;
+  opacity: 0.45;
+  transform: translateX(-50%);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.25s ease;
+}
+.bar:hover,
+.bar:focus-within {
+  opacity: 1;
+}
+.bar [role='radiogroup'] {
+  display: flex;
+}
+.bar button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.bar button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+}
+.bar i {
+  display: block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+.bar button[aria-checked='true'] i {
+  box-shadow: 0 0 0 2px #fff;
+}
+@media (pointer: coarse) {
+  .bar {
+    opacity: 0.7;
+  }
+  .bar button {
+    width: 36px;
+    height: 36px;
+  }
+}
